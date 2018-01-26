@@ -1,0 +1,4 @@
+name: upstream
+summary: Interface to send upstream services
+version: 1
+repo: https://github.com:tengu-team/interface-upstream.git
