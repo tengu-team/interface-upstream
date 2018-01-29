@@ -34,17 +34,17 @@ class UpstreamRequires(Endpoint):
             clear_flag(self.expand_name('available'))
         clear_flag(self.expand_name('departed'))
 
-    @when_any('endpoint.{endpoint_name}.changed.vhost')
+    @when_any('endpoint.{endpoint_name}.changed.nginx_config')
     def upstream_changed(self):
         set_flag(self.expand_name('endpoint.{endpoint_name}.new-upstream'))
-        clear_flag(self.expand_name('endpoint.{endpoint_name}.changed.vhost'))
+        clear_flag(self.expand_name('endpoint.{endpoint_name}.changed.nginx_config'))
 
     def get_upstreams(self):
         """
         [
             {
                 'remote_unit_name': 'api/0',
-                'vhost': 'server: ...'
+                'nginx_config': 'server { ...'
             }
         ]         
         """
@@ -53,6 +53,6 @@ class UpstreamRequires(Endpoint):
             for unit in relation.units:
                 upstreams.append({
                     'remote_unit_name': unit.unit_name,
-                    'vhost': unit.received['vhost'],
+                    'nginx_config': unit.received['nginx_config'],
                 })
         return upstreams

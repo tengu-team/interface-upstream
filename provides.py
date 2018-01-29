@@ -30,6 +30,6 @@ class UpstreamProvides(Endpoint):
         clear_flag(self.expand_name('available'))
         clear_flag(self.expand_name('departed'))
 
-    def publish_info(self, vhost):
+    def publish_info(self, nginx_config):
         for relation in self.relations:
-            relation.to_publish['vhost'] = vhost
+            relation.to_publish['nginx_config'] = nginx_config

@@ -1,7 +1,8 @@
 
 
+
 # Overview
-This interface is used for charms who want to send upstream api information or set up a reverse-proxy gateway.
+This interface is used for charms who want to send upstream api information or set up a reverse-proxy gateway with NGINX.
 
 # Usage
 ## Requires
@@ -12,14 +13,14 @@ The `endpoint.{relation-name}.available` flag indicates that at least one upstre
 [
     {
         'remote_unit_name': 'api/0',
-        'vhost': '...'
+        'nginx_config': '...'
     }
 ]
 ```
 
 ## Provides
 
-By providing the `upstream` interface, your charm is providing upstream endpoints that can be load balanced, reverse-proxied. Use the `publish_info(vhost)` method to send configurations to the gateway.
+By providing the `upstream` interface, your charm is providing upstream endpoints that can be load balanced, reverse-proxied. Use the `publish_info(nginx_config)` method to send NGINX configurations to the gateway.
 
 ```python
 @when('endpoint.{endpoint-name}.available')
