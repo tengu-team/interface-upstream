@@ -25,19 +25,16 @@ class UpstreamRequires(Endpoint):
     def upstream_joined(self):
         set_flag(self.expand_name('available'))
 
-    @when_any('endpoint.{endpoint_name}.departed')
-    def upstream_departed(self):
-        if self.relations:
-            set_flag(self.expand_name('new-upstream'))
-        else:
-            set_flag(self.expand_name('cleanup'))
-            clear_flag(self.expand_name('available'))
-        clear_flag(self.expand_name('departed'))
+    @when_not('endpoint.{endpoint_name}.joined')
+    def upstream_broken(self):
+        clear_flag(self.expand_name('available'))
 
-    @when_any('endpoint.{endpoint_name}.changed.nginx_config')
+    @when_any('endpoint.{endpoint_name}.changed.nginx_config',
+              'endpoint.{endpoint_name}.departed')
     def upstream_changed(self):
-        set_flag(self.expand_name('endpoint.{endpoint_name}.new-upstream'))
-        clear_flag(self.expand_name('endpoint.{endpoint_name}.changed.nginx_config'))
+        set_flag(self.expand_name('new-upstream'))
+        clear_flag(self.expand_name('changed.nginx_config'))
+        clear_flag(self.expand_name('departed'))
 
     def get_upstreams(self):
         """

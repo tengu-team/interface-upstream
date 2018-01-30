@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from charms.reactive import when_any
+from charms.reactive import when_any, when_not
 from charms.reactive import set_flag, clear_flag
 from charms.reactive import Endpoint
 
@@ -25,10 +25,10 @@ class UpstreamProvides(Endpoint):
     def upstream_joined(self):
         set_flag(self.expand_name('available'))
 
-    @when_any('endpoint.{endpoint_name}.departed')
+    @when_not('endpoint.{endpoint_name}.joined')
     def upstream_departed(self):
-        clear_flag(self.expand_name('available'))
         clear_flag(self.expand_name('departed'))
+        clear_flag(self.expand_name('available'))
 
     def publish_info(self, nginx_config):
         for relation in self.relations:
