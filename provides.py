@@ -26,10 +26,17 @@ class UpstreamProvides(Endpoint):
         set_flag(self.expand_name('available'))
 
     @when_not('endpoint.{endpoint_name}.joined')
+    def upstream_broken(self):        
+        clear_flag(self.expand_name('available'))
+    
+    @when_any('endpoint.{endpoint_name}.departed')
     def upstream_departed(self):
         clear_flag(self.expand_name('departed'))
-        clear_flag(self.expand_name('available'))
 
-    def publish_info(self, nginx_config):
+    def publish_config(self, nginx_config):
         for relation in self.relations:
             relation.to_publish['nginx_config'] = nginx_config
+
+    def publish_location(self, location_config):
+        for relation in self.relations:
+            relation.to_publish['location_config'] = location_config
