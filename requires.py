@@ -35,6 +35,7 @@ class UpstreamRequires(Endpoint):
     def upstream_changed(self):
         set_flag(self.expand_name('new-upstream'))
         clear_flag(self.expand_name('changed.nginx_config'))
+        clear_flag(self.expand_name('changed.location_config'))
         clear_flag(self.expand_name('departed'))
 
     def get_nginx_configs(self):
