@@ -28,6 +28,16 @@ Use `get_nginx_locations()` to get all nginx [location](http://nginx.org/en/docs
 ]
 ```
 
+Use `get_nginx_streams()` to get all nginx [stream](http://nginx.org/en/docs/stream/ngx_stream_core_module.html) blocks. It returns information in the following format:
+```
+[
+    {
+        'remote_unit_name': 'api/0',
+        'stream_config': '...'
+    }
+]
+```
+
 ```python
 @when('endpoint.{relation-name}.new-upstream')
 def update_nginx_config():
@@ -45,9 +55,10 @@ By providing the `upstream` interface, your charm is providing upstream endpoint
 This interface layer will set the following states, as appropriate:
 - `endpoint.{relation-name}.available` indicates that at least one upstream is connected. This state is automatically removed.
 
-This interface provides two methods to send NGINX configuration:
+This interface provides the following methods to send NGINX configuration:
 - `publish_location` should be used only to send [location](http://nginx.org/en/docs/http/ngx_http_core_module.html#location) blocks. 
-- `publish_config` should be used for all other configurations.
+- `publish_config` should be used for all other **http** configurations.
+- `publish_stream` should be used to send a [stream](http://nginx.org/en/docs/stream/ngx_stream_core_module.html) block.
 
 
 ```python
@@ -56,8 +67,10 @@ def configure():
     endpoint = get_endpoint_from_flag('endpoint.{endpoint-name}.available')
     location_config = "location /api { ..."
     nginx_config = "map ..."
+    stream_config = "stream { ..."
     endpoint.publish_location(location_config)
     endpoint.publish_config(nginx_config)
+    endpoint.publish_stream(stream_config)
 ```
 
 

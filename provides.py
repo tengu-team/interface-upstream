@@ -40,3 +40,16 @@ class UpstreamProvides(Endpoint):
     def publish_location(self, location_config):
         for relation in self.relations:
             relation.to_publish['location_config'] = location_config
+
+    def publish_stream(self, streams_config):
+        for relation in self.relations:
+            relation.to_publish['stream_config'] = streams_config
+
+    def clear_all_configs(self):
+        for relation in self.relations:
+            try:
+                del relation.to_publish['nginx_config']
+                del relation.to_publish['location_config']
+                del relation.to_publish['stream_config']
+            except KeyError:
+                pass

@@ -31,11 +31,13 @@ class UpstreamRequires(Endpoint):
 
     @when_any('endpoint.{endpoint_name}.changed.nginx_config',
               'endpoint.{endpoint_name}.changed.location_config',
+              'endpoint.{endpoint_name}.changed.stream_config',
               'endpoint.{endpoint_name}.departed')
     def upstream_changed(self):
         set_flag(self.expand_name('new-upstream'))
         clear_flag(self.expand_name('changed.nginx_config'))
         clear_flag(self.expand_name('changed.location_config'))
+        clear_flag(self.expand_name('changed.stream_config'))
         clear_flag(self.expand_name('departed'))
 
     def get_nginx_configs(self):
@@ -50,10 +52,13 @@ class UpstreamRequires(Endpoint):
         configs = []
         for relation in self.relations:
             for unit in relation.units:
-                configs.append({
-                    'remote_unit_name': unit.unit_name,
-                    'nginx_config': unit.received['nginx_config'],
-                })
+                # Filter out units which do not have any configs
+                if ('nginx_config' in unit.received and 
+                        unit.received['nginx_config']):
+                    configs.append({
+                        'remote_unit_name': unit.unit_name,
+                        'nginx_config': unit.received['nginx_config'],
+                    })
         return configs
 
     def get_nginx_locations(self):
@@ -68,8 +73,32 @@ class UpstreamRequires(Endpoint):
         locations = []
         for relation in self.relations:
             for unit in relation.units:
-                locations.append({
-                    'remote_unit_name': unit.unit_name,
-                    'location_config': unit.received['location_config']
-                })
+                # Filter out units which do not have any locations
+                if ('location_config' in unit.received and 
+                        unit.received['location_config']):
+                    locations.append({
+                        'remote_unit_name': unit.unit_name,
+                        'location_config': unit.received['location_config'],
+                    })
         return locations
+
+    def get_nginx_streams(self):
+        """
+        [
+            {
+                'remote_unit_name': 'api/0',
+                'stream_config': 'streams { ...'
+            }
+        ]
+        """
+        streams = []
+        for relation in self.relations:
+            for unit in relation.units:
+                # Filter out units which do not have any streams
+                if ('stream_config' in unit.received and
+                        unit.received['stream_config']):
+                    streams.append({
+                        'remote_unit_name': unit.unit_name,
+                        'stream_config': unit.received['stream_config'],
+                    })
+        return streams
